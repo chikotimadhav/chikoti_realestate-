@@ -4,7 +4,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/chikoti_realestate';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/chikoti_realestate';
 
 mongoose.connect(MONGO_URI)
   .then(async () => {
