@@ -53,8 +53,10 @@ app.use((err, _req, res, _next) => {
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 });
 
-app.listen(PORT, () =>
-  console.log(`\n🚀 Chikoti API running on http://localhost:${PORT}\n`)
-);
+if (require.main === module) {
+  app.listen(PORT, () =>
+    console.log(`\n🚀 Chikoti API running on http://localhost:${PORT}\n`)
+  );
+}
 
 module.exports = app;
