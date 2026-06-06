@@ -1,0 +1,24 @@
+{
+  "name": "chikoti-realestate",
+  "version": "1.0.0",
+  "description": "A complete real estate platform with 5 separate folders, one shared database, and a clear approval workflow.",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "buyer-portal",
+    "seller-portal",
+    "admin-portal"
+  ],
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "concurrently --kill-others \"npm run dev --workspace=backend\" \"npm run dev --workspace=buyer-portal\" \"npm run dev --workspace=seller-portal\" \"npm run dev --workspace=admin-portal\"",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:buyer": "npm run dev --workspace=buyer-portal",
+    "dev:seller": "npm run dev --workspace=seller-portal",
+    "dev:admin": "npm run dev --workspace=admin-portal",
+    "build": "npm run build --workspaces"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
