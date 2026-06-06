@@ -1,9 +1,9 @@
 // ============================================================
-// AUTH ROUTES (MONGODB)
+// AUTH ROUTES (SUPABASE)
 // ============================================================
 const express  = require('express');
 const bcrypt   = require('bcryptjs');
-const User     = require('../models/User');
+const supabase = require('../config/db');
 const { generateToken, authenticate } = require('../middleware/auth');
 
 const router = express.Router();
@@ -17,23 +17,35 @@ router.post('/register', async (req, res) => {
     if (!['buyer','seller'].includes(role))
       return res.status(400).json({ error: 'Invalid role' });
 
-    const existing = await User.findOne({ email });
+    const { data: existing, error: existErr } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (existErr) throw new Error(existErr.message);
     if (existing) return res.status(409).json({ error: 'Email already registered' });
 
     const hashed = await bcrypt.hash(password, 10);
-    const userDoc = await User.create({
-      name,
-      email,
-      phone: phone || null,
-      password: hashed,
-      role
-    });
+    const { data: user, error: createErr } = await supabase
+      .from('users')
+      .insert({
+        name,
+        email,
+        phone: phone || null,
+        password: hashed,
+        role
+      })
+      .select()
+      .single();
 
-    const user = userDoc.toObject();
-    delete user.password;
+    if (createErr || !user) throw new Error(createErr?.message || 'Failed to create user');
 
-    const token = generateToken(user);
-    res.status(201).json({ success: true, data: { user, token } });
+    const cleanUser = { ...user };
+    delete cleanUser.password;
+
+    const token = generateToken(cleanUser);
+    res.status(201).json({ success: true, data: { user: cleanUser, token } });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -41,24 +53,32 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const userDoc = await User.findOne({ email, is_active: true });
-    if (!userDoc) return res.status(401).json({ error: 'Invalid credentials' });
+    const { data: user, error: findErr } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .eq('is_active', true)
+      .maybeSingle();
 
-    const match = await bcrypt.compare(password, userDoc.password);
+    if (findErr) throw new Error(findErr.message);
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const user = userDoc.toObject();
-    const token = generateToken(user);
-    delete user.password;
+    const cleanUser = { ...user };
+    const token = generateToken(cleanUser);
+    delete cleanUser.password;
 
-    res.json({ success: true, data: { user, token } });
+    res.json({ success: true, data: { user: cleanUser, token } });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── GET /api/auth/me ───────────────────────────────────────
 router.get('/me', authenticate, (req, res) => {
-  const { password, ...user } = req.user;
-  res.json({ success: true, data: user });
+  const cleanUser = { ...req.user };
+  delete cleanUser.password;
+  res.json({ success: true, data: cleanUser });
 });
 
 module.exports = router;

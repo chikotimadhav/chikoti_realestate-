@@ -1,38 +1,21 @@
 // ============================================================
-// DATABASE CONNECTION (MONGODB / MONGOOSE)
+// SUPABASE CLIENT INITIALIZATION
 // ============================================================
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const { createClient } = require('@supabase/supabase-js');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/chikoti_realestate';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-mongoose.connect(MONGO_URI)
-  .then(async () => {
-    console.log('MongoDB Connected successfully!');
-    
-    // Seed default admin user if it doesn't exist
-    try {
-      const User = require('../models/User');
-      const adminExists = await User.findOne({ role: 'admin' });
-      if (!adminExists) {
-        const hashed = await bcrypt.hash('admin123', 10);
-        await User.create({
-          _id: 'admin-001',
-          name: 'Chikoti Admin',
-          email: 'admin@chikotirealestate.com',
-          password: hashed,
-          role: 'admin',
-          is_verified: true,
-          is_active: true
-        });
-        console.log('Default Admin account seeded successfully!');
-      }
-    } catch (err) {
-      console.error('Error seeding default admin:', err.message);
-    }
-  })
-  .catch(err => {
-    console.error('MongoDB Connection Error:', err);
-  });
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.warn('\n⚠️  WARNING: Missing SUPABASE_URL or SUPABASE_KEY environment variables!');
+  console.warn('Please define them in your backend/.env file for local development or Vercel dashboard for production.\n');
+}
 
-module.exports = mongoose;
+const supabase = createClient(
+  SUPABASE_URL || 'https://placeholder-project.supabase.co',
+  SUPABASE_KEY || 'placeholder-anon-key'
+);
+
+console.log('Supabase client initialized!');
+
+module.exports = supabase;

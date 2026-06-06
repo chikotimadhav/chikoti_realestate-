@@ -1,9 +1,8 @@
 // ============================================================
-// INQUIRIES ROUTES (MONGODB)
+// INQUIRIES ROUTES (SUPABASE)
 // ============================================================
-const express = require('express');
-const Inquiry = require('../models/Inquiry');
-const Property = require('../models/Property');
+const express  = require('express');
+const supabase = require('../config/db');
 const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
@@ -15,16 +14,32 @@ router.post('/', async (req, res) => {
     if (!property_id || !buyer_name || !buyer_email || !buyer_phone)
       return res.status(400).json({ error: 'All fields required' });
 
-    await Inquiry.create({
-      property_id,
-      buyer_name,
-      buyer_email,
-      buyer_phone,
-      message: message || ''
-    });
+    const { error: insErr } = await supabase
+      .from('inquiries')
+      .insert({
+        property_id,
+        buyer_name,
+        buyer_email,
+        buyer_phone,
+        message: message || ''
+      });
 
-    // Bump views
-    await Property.updateOne({ _id: property_id }, { $inc: { views: 1 } });
+    if (insErr) throw new Error(insErr.message);
+
+    // Bump views on the property
+    const { data: prop, error: fetchErr } = await supabase
+      .from('properties')
+      .select('views')
+      .eq('id', property_id)
+      .maybeSingle();
+
+    if (!fetchErr && prop) {
+      await supabase
+        .from('properties')
+        .update({ views: (prop.views || 0) + 1 })
+        .eq('id', property_id);
+    }
+
     res.status(201).json({ success: true, message: 'Inquiry sent!' });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -33,19 +48,29 @@ router.post('/', async (req, res) => {
 router.get('/seller', authenticate, async (req, res) => {
   try {
     // Get all properties owned by this seller
-    const sellerProperties = await Property.find({ seller_id: req.user.id }, '_id title');
-    const propertyIds = sellerProperties.map(p => p._id);
+    const { data: sellerProperties, error: propErr } = await supabase
+      .from('properties')
+      .select('id, title')
+      .eq('seller_id', req.user.id);
+
+    if (propErr) throw new Error(propErr.message);
+    const propertyIds = sellerProperties.map(p => p.id);
 
     // Find inquiries for those properties
-    const inquiries = await Inquiry.find({ property_id: { $in: propertyIds } })
-      .sort({ created_at: -1 })
-      .populate('property_id', 'title');
+    const { data: inquiries, error: inqErr } = await supabase
+      .from('inquiries')
+      .select('*, property:properties(id, title)')
+      .in('property_id', propertyIds)
+      .order('created_at', { ascending: false });
+
+    if (inqErr) throw new Error(inqErr.message);
 
     // Flatten response properties to match what frontend expects
     const data = inquiries.map(i => {
-      const obj = i.toObject();
-      obj.property_title = i.property_id ? i.property_id.title : 'Deleted Property';
-      obj.property_id = i.property_id ? i.property_id._id : null;
+      const obj = { ...i };
+      obj.property_title = i.property ? i.property.title : 'Deleted Property';
+      obj.property_id = i.property ? i.property.id : null;
+      delete obj.property;
       return obj;
     });
 
