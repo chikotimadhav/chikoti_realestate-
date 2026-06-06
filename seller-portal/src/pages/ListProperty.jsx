@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_URL } from '../config';
 
 const AGRI_FACILITIES = ['Road Access','Market Nearby','Warehouse','Labour Available','Transport Facility','Irrigation Channel'];
 const COMM_AMENITIES  = ['Air Conditioning','Generator Backup','CCTV Security','Fire Safety','WiFi','Signage','Washroom'];
@@ -90,7 +91,7 @@ export default function ListPage({ navigate }) {
 
       const payload = { ...form, price: parseFloat(form.price), images };
 
-      const res  = await fetch('http://localhost:5000/api/properties', {
+      const res  = await fetch(`${API_URL}/api/properties`, {
         method: 'POST',
         headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token()}` },
         body: JSON.stringify(payload),

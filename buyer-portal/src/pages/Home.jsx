@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropertyCard from '../components/PropertyCard.jsx';
+import { API_URL } from '../config';
 
 const STATS = [
   { icon:'🏠', value:'525+', label:'Properties Transacted' },
@@ -31,7 +32,7 @@ export default function HomePage({ navigate, openDetail }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/properties/featured')
+    fetch(`${API_URL}/api/properties/featured`)
       .then(r => r.json())
       .then(d => setFeatured(d.data || []))
       .catch(() => setFeatured([]))

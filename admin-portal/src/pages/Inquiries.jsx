@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function token() { return localStorage.getItem('ck_admin_token'); }
 
@@ -8,7 +9,7 @@ export default function InquiriesPage() {
   const [search,    setSearch]    = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/admin/inquiries', {
+    fetch(`${API_URL}/api/admin/inquiries`, {
       headers: { Authorization: `Bearer ${token()}` }
     })
       .then(r => r.json())

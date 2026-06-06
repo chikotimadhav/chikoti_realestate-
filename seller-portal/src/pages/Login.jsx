@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../config';
 
 export default function LoginPage({ onLogin }) {
   const [tab, setTab]   = useState('login');
@@ -10,8 +11,8 @@ export default function LoginPage({ onLogin }) {
     e.preventDefault(); setErr(''); setLoading(true);
     try {
       const endpoint = tab === 'login'
-        ? 'http://localhost:5000/api/auth/login'
-        : 'http://localhost:5000/api/auth/register';
+        ? `${API_URL}/api/auth/login`
+        : `${API_URL}/api/auth/register`;
       const body = tab === 'login'
         ? { email: form.email, password: form.password }
         : { ...form, role: 'seller' };

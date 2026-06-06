@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function token() { return localStorage.getItem('ck_admin_token'); }
 function fmtPrice(n) {
@@ -19,7 +20,7 @@ export default function PropertiesPage() {
   async function load() {
     setLoading(true);
     const qs = tab !== 'all' ? `?status=${tab}` : '';
-    const res = await fetch(`http://localhost:5000/api/admin/properties${qs}`, {
+    const res = await fetch(`${API_URL}/api/admin/properties${qs}`, {
       headers: { Authorization: `Bearer ${token()}` }
     });
     const data = await res.json();
@@ -30,7 +31,7 @@ export default function PropertiesPage() {
   useEffect(() => { load(); }, [tab]);
 
   async function updateStatus(id, status, is_featured = false) {
-    await fetch(`http://localhost:5000/api/admin/properties/${id}/status`, {
+    await fetch(`${API_URL}/api/admin/properties/${id}/status`, {
       method:'PATCH',
       headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token()}` },
       body: JSON.stringify({ status, is_featured }),
@@ -41,7 +42,7 @@ export default function PropertiesPage() {
 
   async function deleteProperty(id) {
     if (!confirm('Permanently delete this property?')) return;
-    await fetch(`http://localhost:5000/api/properties/${id}`, {
+    await fetch(`${API_URL}/api/properties/${id}`, {
       method:'DELETE', headers:{ Authorization:`Bearer ${token()}` }
     });
     load();

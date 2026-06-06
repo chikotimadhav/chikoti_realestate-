@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function token() { return localStorage.getItem('ck_seller_token'); }
 
@@ -20,10 +21,10 @@ export default function DashboardPage({ user, navigate }) {
     setLoading(true);
     try {
       const [pRes, iRes] = await Promise.all([
-        fetch('http://localhost:5000/api/properties/seller/mine', {
+        fetch(`${API_URL}/api/properties/seller/mine`, {
           headers: { Authorization: `Bearer ${token()}` }
         }),
-        fetch('http://localhost:5000/api/inquiries/seller', {
+        fetch(`${API_URL}/api/inquiries/seller`, {
           headers: { Authorization: `Bearer ${token()}` }
         }),
       ]);
@@ -39,7 +40,7 @@ export default function DashboardPage({ user, navigate }) {
 
   async function deleteProp(id) {
     if (!confirm('Delete this property?')) return;
-    await fetch(`http://localhost:5000/api/properties/${id}`, {
+    await fetch(`${API_URL}/api/properties/${id}`, {
       method: 'DELETE', headers: { Authorization: `Bearer ${token()}` }
     });
     load();

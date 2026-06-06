@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function token() { return localStorage.getItem('ck_seller_token'); }
 
@@ -7,7 +8,7 @@ export default function InquiriesPage() {
   const [loading,   setLoading]   = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/inquiries/seller', {
+    fetch(`${API_URL}/api/inquiries/seller`, {
       headers: { Authorization: `Bearer ${token()}` }
     })
       .then(r => r.json())

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function token() { return localStorage.getItem('ck_admin_token'); }
 
@@ -19,8 +20,8 @@ export default function OverviewPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:5000/api/admin/stats', { headers:{ Authorization:`Bearer ${token()}` } }).then(r=>r.json()),
-      fetch('http://localhost:5000/api/admin/properties?status=pending', { headers:{ Authorization:`Bearer ${token()}` } }).then(r=>r.json()),
+      fetch(`${API_URL}/api/admin/stats`, { headers:{ Authorization:`Bearer ${token()}` } }).then(r=>r.json()),
+      fetch(`${API_URL}/api/admin/properties?status=pending`, { headers:{ Authorization:`Bearer ${token()}` } }).then(r=>r.json()),
     ]).then(([s, p]) => {
       setStats(s.data || {});
       setPending((p.data || []).slice(0, 5));
@@ -109,7 +110,7 @@ function PendingRow({ property: p, onAction }) {
 
   async function act(status, is_featured = false) {
     setActing(true);
-    await fetch(`http://localhost:5000/api/admin/properties/${p.id}/status`, {
+    await fetch(`${API_URL}/api/admin/properties/${p.id}/status`, {
       method:'PATCH',
       headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token()}` },
       body: JSON.stringify({ status, is_featured }),

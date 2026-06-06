@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../config';
 
 function formatPrice(n) {
   if (!n) return '—';
@@ -21,7 +22,7 @@ export default function PropertyDetailModal({ property: p, onClose }) {
       setErr('Please fill all fields'); return;
     }
     try {
-      const res = await fetch('http://localhost:5000/api/inquiries', {
+      const res = await fetch(`${API_URL}/api/inquiries`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ ...form, property_id: p.id }),
       });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function token() { return localStorage.getItem('ck_admin_token'); }
 
@@ -10,7 +11,7 @@ export default function UsersPage() {
 
   async function load() {
     setLoading(true);
-    const res  = await fetch('http://localhost:5000/api/admin/users', {
+    const res  = await fetch(`${API_URL}/api/admin/users`, {
       headers: { Authorization: `Bearer ${token()}` }
     });
     const data = await res.json();
@@ -21,7 +22,7 @@ export default function UsersPage() {
   useEffect(() => { load(); }, []);
 
   async function toggleUser(id, field, current) {
-    await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+    await fetch(`${API_URL}/api/admin/users/${id}`, {
       method:'PATCH',
       headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token()}` },
       body: JSON.stringify({ [field]: !current }),

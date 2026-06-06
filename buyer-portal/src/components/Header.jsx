@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../config';
 
 const NAV = [
   { label: 'Home',       page: 'home' },
@@ -18,8 +19,8 @@ export default function Header({ page, navigate, user, onLogin, onLogout }) {
     setErr(''); setLoading(true);
     try {
       const endpoint = tab === 'login'
-        ? 'http://localhost:5000/api/auth/login'
-        : 'http://localhost:5000/api/auth/register';
+        ? `${API_URL}/api/auth/login`
+        : `${API_URL}/api/auth/register`;
       const body = tab === 'login'
         ? { email: form.email, password: form.password }
         : form;

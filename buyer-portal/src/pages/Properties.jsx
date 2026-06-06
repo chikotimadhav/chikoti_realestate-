@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropertyCard from '../components/PropertyCard.jsx';
+import { API_URL } from '../config';
 
 const TYPES    = ['','Agriculture','Commercial','Residential'];
 const LISTINGS = ['','Sale','Rent','Lease'];
@@ -19,7 +20,7 @@ export default function PropertiesPage({ openDetail }) {
     if (type)    params.set('type', type);
     if (listing) params.set('listing', listing);
     if (sort)    params.set('sort', sort);
-    fetch(`http://localhost:5000/api/properties?${params}`)
+    fetch(`${API_URL}/api/properties?${params}`)
       .then(r => r.json())
       .then(d => setProperties(d.data || []))
       .catch(() => setProperties([]))
