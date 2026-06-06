@@ -18,15 +18,27 @@ const app  = express();
 const PORT = process.env.PORT || 5000;
 
 // ── Middleware ─────────────────────────────────────────────
+const allowedOrigins = [
+  'http://localhost:3001',  // buyer
+  'http://localhost:3002',  // seller
+  'http://localhost:3003',  // admin
+  'https://www.chikotirealestate.com',
+  'https://seller.chikotirealestate.com',
+  'https://admin.chikotirealestate.com',
+];
+
+if (process.env.CORS_ORIGINS) {
+  allowedOrigins.push(...process.env.CORS_ORIGINS.split(',').map(o => o.trim()));
+}
+
 app.use(cors({
-  origin: [
-    'http://localhost:3001',  // buyer
-    'http://localhost:3002',  // seller
-    'http://localhost:3003',  // admin
-    'https://www.chikotirealestate.com',
-    'https://seller.chikotirealestate.com',
-    'https://admin.chikotirealestate.com',
-  ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '20mb' }));
