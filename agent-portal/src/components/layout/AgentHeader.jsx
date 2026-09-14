@@ -9,7 +9,9 @@ export default function AgentHeader({ activeTab, onTabChange, onOpenAddLead, onO
     toggleTheme, 
     notifications, 
     markNotificationRead, 
-    setIsSearchOpen 
+    setIsSearchOpen,
+    dbStatus,
+    dbInfo
   } = useAgentData();
 
   const [showNotifMenu, setShowNotifMenu] = useState(false);
@@ -21,11 +23,25 @@ export default function AgentHeader({ activeTab, onTabChange, onOpenAddLead, onO
   return (
     <header className="agent-header">
       {/* Left: Dynamic Island Capsule (Inspired directly by user reference monitor!) */}
-      <div className="dynamic-island-capsule" style={{ display: 'none', minWidth: 0, '@media (min-width: 900px)': { display: 'flex' } }}>
-        <div className="capsule-badge-zoom">
-          <span className="pulse-dot"></span>
-          <i className="fa-solid fa-video" style={{ fontSize: '0.7rem' }}></i>
-          <span>Meeting: Kokapet Penthouse (02:00 PM)</span>
+      <div className="dynamic-island-capsule" style={{ display: 'flex' }}>
+        <div 
+          className="capsule-badge-zoom" 
+          style={{ 
+            background: dbStatus === 'connected' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+            borderColor: dbStatus === 'connected' ? 'rgba(34, 197, 94, 0.35)' : 'rgba(245, 158, 11, 0.35)',
+            color: dbStatus === 'connected' ? 'var(--emerald-neon)' : 'var(--gold-accent)'
+          }}
+          title={`Connected to shared database (${dbInfo?.db || 'MongoDB'}) at ${dbInfo?.host || 'chikoti-realestate.onrender.com'}`}
+        >
+          <span 
+            className="pulse-dot" 
+            style={{ 
+              background: dbStatus === 'connected' ? 'var(--emerald-neon)' : 'var(--gold-accent)',
+              boxShadow: `0 0 8px ${dbStatus === 'connected' ? 'var(--emerald-neon)' : 'var(--gold-accent)'}`
+            }}
+          ></span>
+          <i className="fa-solid fa-database" style={{ fontSize: '0.7rem' }}></i>
+          <span>{dbStatus === 'connected' ? 'Database: Live' : 'Database: Connecting...'}</span>
         </div>
 
         <div style={{ height: 16, width: 1, background: 'rgba(255,255,255,0.1)' }}></div>

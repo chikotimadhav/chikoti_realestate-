@@ -9,12 +9,21 @@ import {
   INITIAL_NOTIFICATIONS,
   INITIAL_TICKETS
 } from '../data/mockData.js';
+import {
+  checkDatabaseHealth,
+  fetchDatabaseProperties,
+  sendLeadToDatabase
+} from '../services/api.js';
 
 const AgentDataContext = createContext();
 
 export function AgentDataProvider({ children }) {
   // Theme state: dark mode as default (matching the reference monitor photo!)
   const [theme, setTheme] = useState(() => localStorage.getItem('eh_agent_theme') || 'dark');
+
+  // Database Connection Status: 'connecting' | 'connected' | 'offline'
+  const [dbStatus, setDbStatus] = useState('connecting');
+  const [dbInfo, setDbInfo] = useState({ db: 'Shared Database', host: 'chikoti-realestate.onrender.com' });
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'theme-dark' : 'theme-light';
@@ -24,6 +33,37 @@ export function AgentDataProvider({ children }) {
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
+
+  // ── Database Initial Sync ─────────────────────────────────
+  useEffect(() => {
+    let isMounted = true;
+
+    async function syncDatabase() {
+      // 1. Check health
+      const health = await checkDatabaseHealth();
+      if (isMounted) {
+        if (health.ok) {
+          setDbStatus('connected');
+          if (health.data?.db) setDbInfo(prev => ({ ...prev, db: health.data.db }));
+        } else {
+          setDbStatus('offline');
+        }
+      }
+
+      // 2. Fetch live properties from shared database
+      const liveProps = await fetchDatabaseProperties();
+      if (isMounted && liveProps && liveProps.length > 0) {
+        setProperties(prev => {
+          const liveIds = new Set(liveProps.map(p => p.id));
+          const merged = [...liveProps, ...prev.filter(p => !liveIds.has(p.id))];
+          return merged;
+        });
+      }
+    }
+
+    syncDatabase();
+    return () => { isMounted = false; };
+  }, []);
 
   // ── Reactive Data Stores ──────────────────────────────────
   const [properties, setProperties] = useState(() => {
@@ -145,6 +185,13 @@ export function AgentDataProvider({ children }) {
     };
     setLeads(prev => [lead, ...prev]);
     addToast(`Lead for ${lead.customerName} added successfully!`, 'success');
+
+    // Asynchronously sync lead to shared database
+    sendLeadToDatabase(lead).then(res => {
+      if (res && res.ok) {
+        addToast(`Lead synced to shared database`, 'info');
+      }
+    });
 
     // Also auto-add notification
     const notif = {
@@ -312,6 +359,8 @@ export function AgentDataProvider({ children }) {
     <AgentDataContext.Provider value={{
       theme,
       toggleTheme,
+      dbStatus,
+      dbInfo,
       properties,
       leads,
       clients,

@@ -23,6 +23,8 @@ const allowedOrigins = [
   'http://localhost:3001',  // buyer
   'http://localhost:3002',  // seller
   'http://localhost:3003',  // admin
+  'http://localhost:3004',  // agent
+  'https://agent-portal-henna.vercel.app', // agent vercel
   'https://www.chikotirealestate.com',
   'https://seller.chikotirealestate.com',
   'https://admin.chikotirealestate.com',

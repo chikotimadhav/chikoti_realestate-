@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { INITIAL_AGENTS } from '../data/mockData.js';
+import { loginAgentToDatabase } from '../services/api.js';
 
 const AuthContext = createContext();
 
@@ -47,8 +48,42 @@ export function AuthProvider({ children }) {
   }, [currentAgent]);
 
   // Login handler
-  const login = (identifier, password) => {
-    // Find matching agent by email or phone
+  const login = async (identifier, password) => {
+    // 1. Attempt database authentication first
+    try {
+      const dbAuth = await loginAgentToDatabase(identifier.trim(), password);
+      if (dbAuth.ok && dbAuth.data?.user) {
+        const u = dbAuth.data.user;
+        const dbAgent = {
+          id: u.id || u._id || `agt_${Date.now()}`,
+          name: u.name,
+          email: u.email,
+          phone: u.phone || '+91 98490 XXXXX',
+          city: u.city || 'Hyderabad',
+          agencyName: u.agency_name || 'EstateHub Real Estate',
+          reraNumber: u.rera_number || 'TS-RERA-A51800034921',
+          experienceYears: 5,
+          status: 'Approved',
+          avatar: u.avatar_url || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=256',
+          areasServed: ['Jubilee Hills', 'Kokapet', 'Financial District'],
+          propertyTypes: ['Villas', 'Apartments', 'Commercial'],
+          rating: 4.9,
+          reviewsCount: 38,
+          propertiesHandled: 24,
+          successfulSales: 18,
+          verification: { identity: true, rera: true, phone: true, email: true },
+          bankDetails: { accountHolder: u.name, bankName: 'HDFC Bank', accountNumber: '•••• 8841', ifsc: 'HDFC0000240' }
+        };
+        setCurrentAgent(dbAgent);
+        setToken(dbAuth.data.token);
+        localStorage.setItem('eh_agent_token', dbAuth.data.token);
+        return { success: true, agent: dbAgent };
+      }
+    } catch (err) {
+      console.warn('Database auth fallback to demo accounts:', err);
+    }
+
+    // 2. Find matching agent by email or phone in local accounts
     const cleanId = identifier.trim().toLowerCase();
     const found = agents.find(a => 
       a.email.toLowerCase() === cleanId || 
