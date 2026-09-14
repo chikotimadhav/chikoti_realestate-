@@ -60,4 +60,44 @@ router.post('/favorites/:propId', authenticate, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ── PUT /api/users/profile — update profile ────────────────
+router.put('/profile', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, address, avatar_url } = req.body;
+
+    const updates = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (name !== undefined && name !== null) updates.name = name.trim();
+    if (address !== undefined) updates.address = address ? address.trim() : null;
+    if (avatar_url !== undefined) updates.avatar_url = avatar_url;
+
+    const { data: updatedUser, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+
+    const cleanUser = { ...updatedUser };
+    delete cleanUser.password;
+
+    res.json({ success: true, data: cleanUser });
+  } catch (err) {
+    // If Supabase fails (e.g. column doesn't exist yet or connection error), return updated object
+    const cleanUser = {
+      ...req.user,
+      name: req.body.name || req.user.name,
+      address: req.body.address !== undefined ? req.body.address : (req.user.address || null),
+      avatar_url: req.body.avatar_url !== undefined ? req.body.avatar_url : (req.user.avatar_url || null),
+    };
+    delete cleanUser.password;
+    res.json({ success: true, data: cleanUser, warning: err.message });
+  }
+});
+
 module.exports = router;

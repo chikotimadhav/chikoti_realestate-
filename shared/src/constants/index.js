@@ -1,5 +1,5 @@
 // ============================================================
-// CHIKOTI REAL ESTATE — SHARED CONSTANTS
+// ESTATEHUB — SHARED CONSTANTS
 // Used by: buyer-portal, seller-portal, admin-portal, backend
 // ============================================================
 
@@ -9,8 +9,8 @@ export const API_BASE_URL = {
 };
 
 export const PORTALS = {
-  buyer:  { dev: 'http://localhost:3001', prod: 'https://www.chikotirealestate.com'    },
-  seller: { dev: 'http://localhost:3002', prod: 'https://seller.chikotirealestate.com' },
+  buyer:  { dev: 'http://localhost:3001', prod: 'https://estateshub.vercel.app' },
+  seller: { dev: 'http://localhost:3002', prod: 'https://estateshub-seller-portal.vercel.app' },
   admin:  { dev: 'http://localhost:3003', prod: 'https://admin.chikotirealestate.com'  },
 };
 
@@ -38,10 +38,10 @@ export const STATUS_COLORS = {
 };
 
 export const COMPANY = {
-  name:    'Chikoti Real Estate',
+  name:    'EstateHub',
   tagline: 'Your Trusted Partner in Property Investments',
   phone:   '+91 98765 43210',
-  email:   'info@chikotirealestate.com',
+  email:   'info@estateshub.in',
   address: 'Hyderabad, Telangana, India',
   whatsapp:'919876543210',
   mapCenter: { lat: 17.385044, lng: 78.486671 },

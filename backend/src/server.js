@@ -13,6 +13,7 @@ const inquiryRoutes    = require('./routes/inquiries');
 const userRoutes       = require('./routes/users');
 const uploadRoutes     = require('./routes/upload');
 const adminRoutes      = require('./routes/admin');
+const updateRoutes     = require('./routes/updates');
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -52,6 +53,7 @@ app.use('/api/inquiries',  inquiryRoutes);
 app.use('/api/users',      userRoutes);
 app.use('/api/upload',     uploadRoutes);
 app.use('/api/admin',      adminRoutes);
+app.use('/api/updates',    updateRoutes);
 
 // ── Health check ───────────────────────────────────────────
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', time: new Date() }));

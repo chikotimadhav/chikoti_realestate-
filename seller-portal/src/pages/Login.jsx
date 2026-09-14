@@ -44,9 +44,9 @@ export default function LoginPage({ onLogin }) {
             display:'flex', alignItems:'center', justifyContent:'center',
             margin:'0 auto 0.75rem',
             fontSize:'1.6rem', fontWeight:900, color:'white', fontFamily:'serif',
-          }}>C</div>
+          }}>E</div>
           <h1 style={{ fontFamily:'Plus Jakarta Sans', fontWeight:800, fontSize:'1.4rem', color:'white' }}>
-            Chikoti Seller Portal
+            EstateHub Seller Portal
           </h1>
           <p style={{ color:'#64748B', fontSize:'0.9rem', marginTop:'0.25rem' }}>
             List and manage your properties
@@ -95,8 +95,8 @@ export default function LoginPage({ onLogin }) {
 
         <p style={{ textAlign:'center', color:'#475569', fontSize:'0.85rem', marginTop:'1.5rem' }}>
           Looking to buy? Visit{' '}
-          <a href="https://www.chikotirealestate.com" style={{ color:'#14B8A6', fontWeight:600 }}>
-            www.chikotirealestate.com
+          <a href="https://estateshub.vercel.app/" style={{ color:'#14B8A6', fontWeight:600 }}>
+            estateshub.vercel.app
           </a>
         </p>
       </div>

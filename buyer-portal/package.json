@@ -1,7 +1,7 @@
 {
   "name": "chikoti-buyer-portal",
   "version": "1.0.0",
-  "description": "Chikoti Real Estate — Public Buyer Portal",
+  "description": "EstateHub — Public Buyer Portal",
   "type": "module",
   "scripts": {
     "dev":   "vite --port 3001",

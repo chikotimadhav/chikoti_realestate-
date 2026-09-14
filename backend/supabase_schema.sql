@@ -21,6 +21,7 @@ CREATE TABLE users (
   password TEXT NOT NULL,
   role TEXT CHECK (role IN ('admin', 'seller', 'buyer')) DEFAULT 'buyer',
   avatar_url TEXT DEFAULT NULL,
+  address TEXT DEFAULT NULL,
   is_verified BOOLEAN DEFAULT FALSE,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
@@ -126,6 +127,18 @@ CREATE TRIGGER update_properties_modtime
 BEFORE UPDATE ON properties
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
+
+-- 5. UPDATES & ALERTS TABLE
+CREATE TABLE IF NOT EXISTS updates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  type TEXT DEFAULT 'listing',
+  property_id UUID REFERENCES properties(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_updates_created_at ON updates(created_at DESC);
 
 -- Seed default admin account (password is bcrypt hashed 'admin123')
 INSERT INTO users (id, name, email, password, role, is_verified, is_active)

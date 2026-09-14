@@ -4,6 +4,7 @@
 const express  = require('express');
 const supabase = require('../config/db');
 const { authenticate, requireRole } = require('../middleware/auth');
+const { pushLiveUpdate } = require('./updates');
 
 const router = express.Router();
 
@@ -104,7 +105,7 @@ router.post('/', authenticate, requireRole('seller', 'admin'), async (req, res) 
         seller_id: req.user.id,
         title, land_type, listing_type, price: parseFloat(price), location, lat, lng, description,
         contact_number, whatsapp_number,
-        status: 'pending',
+        status: 'approved',
         acres: acres ? parseFloat(acres) : null,
         soil_type, water_source, current_crop,
         crop_yield: crop_yield ? parseFloat(crop_yield) : null,
@@ -127,7 +128,31 @@ router.post('/', authenticate, requireRole('seller', 'admin'), async (req, res) 
 
     if (createErr || !propertyDoc) throw new Error(createErr?.message || 'Failed to create listing');
 
-    res.status(201).json({ success: true, data: { id: propertyDoc.id }, message: 'Property submitted for review' });
+    // Automatically generate live update alert for both website & app
+    try {
+      const alertData = {
+        title: `🌟 New ${land_type} Listed: ${title}`,
+        message: `A new ${land_type} property is available in ${location} for ${listing_type}.`,
+        type: 'listing',
+        property_id: propertyDoc.id,
+        created_at: new Date().toISOString(),
+      };
+      await supabase.from('updates').insert(alertData);
+      if (typeof pushLiveUpdate === 'function') pushLiveUpdate(alertData);
+    } catch (_) {
+      if (typeof pushLiveUpdate === 'function') {
+        pushLiveUpdate({
+          id: `alert-${Date.now()}`,
+          title: `🌟 New ${land_type} Listed: ${title}`,
+          message: `A new ${land_type} property is available in ${location} for ${listing_type}.`,
+          type: 'listing',
+          property_id: propertyDoc.id,
+          created_at: new Date().toISOString(),
+        });
+      }
+    }
+
+    res.status(201).json({ success: true, data: { id: propertyDoc.id }, message: 'Property listed successfully and live on website & app' });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 

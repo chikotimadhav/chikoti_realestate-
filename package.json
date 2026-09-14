@@ -7,15 +7,17 @@
     "backend",
     "buyer-portal",
     "seller-portal",
-    "admin-portal"
+    "admin-portal",
+    "agent-portal"
   ],
   "scripts": {
     "start": "npm run dev",
-    "dev": "concurrently --kill-others \"npm run dev --workspace=backend\" \"npm run dev --workspace=buyer-portal\" \"npm run dev --workspace=seller-portal\" \"npm run dev --workspace=admin-portal\"",
+    "dev": "concurrently --kill-others \"npm run dev --workspace=backend\" \"npm run dev --workspace=buyer-portal\" \"npm run dev --workspace=seller-portal\" \"npm run dev --workspace=admin-portal\" \"npm run dev --workspace=agent-portal\"",
     "dev:backend": "npm run dev --workspace=backend",
     "dev:buyer": "npm run dev --workspace=buyer-portal",
     "dev:seller": "npm run dev --workspace=seller-portal",
     "dev:admin": "npm run dev --workspace=admin-portal",
+    "dev:agent": "npm run dev --workspace=agent-portal",
     "build": "npm run build --workspaces"
   },
   "dependencies": {

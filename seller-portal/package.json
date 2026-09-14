@@ -1,7 +1,7 @@
 {
   "name": "chikoti-seller-portal",
   "version": "1.0.0",
-  "description": "Chikoti Real Estate — Seller Portal",
+  "description": "EstateHub — Seller Portal",
   "type": "module",
   "scripts": {
     "dev":    "vite --port 3002",

@@ -21,10 +21,10 @@ export default function SellerHeader({ page, navigate, user, onLogout }) {
           background:'linear-gradient(135deg,#0D9488,#14B8A6)',
           display:'flex', alignItems:'center', justifyContent:'center',
           fontWeight:900, fontSize:18, color:'white', fontFamily:'serif',
-        }}>C</div>
+        }}>E</div>
         <div>
           <div style={{ color:'white', fontWeight:800, fontSize:'0.95rem', lineHeight:1.2 }}>
-            Chikoti Seller Portal
+            EstateHub Seller Portal
           </div>
           <div style={{ color:'#14B8A6', fontSize:'0.72rem', fontWeight:600 }}>
             {user?.email}
