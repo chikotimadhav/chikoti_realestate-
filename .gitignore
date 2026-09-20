@@ -39,3 +39,6 @@ build/
 .next/
 out/
 .cache/
+.kotlin/
+.dart_tool/
+

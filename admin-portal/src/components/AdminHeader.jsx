@@ -5,6 +5,7 @@ const PAGE_TITLES = {
   properties: { title:'Property Manager', sub:'Approve, reject & feature listings' },
   users:      { title:'User Management',  sub:'Manage sellers, buyers and admins' },
   inquiries:  { title:'All Inquiries',    sub:'Buyer inquiries across all properties' },
+  'hero-stats': { title:'Hero & App Stats', sub:'Configure statistics on Buyer Portal and Mobile App' },
 };
 
 export default function AdminHeader({ user, onLogout, page }) {

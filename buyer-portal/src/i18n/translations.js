@@ -25,7 +25,8 @@ export const translations = {
     // Stats
     stat_properties: 'Properties Transacted',
     stat_buyers: 'Happy Buyers',
-    stat_corridors: 'Districts & Corridors',
+    stat_cities: 'Cities Covered',
+    stat_corridors: 'Cities Covered',
     stat_excellence: 'Of Excellence',
 
     // Categories
@@ -136,7 +137,8 @@ export const translations = {
     // Stats
     stat_properties: 'విక్రయించబడిన ఆస్తులు',
     stat_buyers: 'సంతృప్తి చెందిన కొనుగోలుదారులు',
-    stat_corridors: 'జిల్లాలు & కారిడార్లు',
+    stat_cities: 'కవర్ చేయబడిన నగరాలు',
+    stat_corridors: 'కవర్ చేయబడిన నగరాలు',
     stat_excellence: 'సంవత్సరాల అనుభవం',
 
     // Categories
@@ -247,7 +249,8 @@ export const translations = {
     // Stats
     stat_properties: 'सफल सौदे',
     stat_buyers: 'संतुष्ट खरीदार',
-    stat_corridors: 'जिले और गलियारे',
+    stat_cities: 'शामिल शहर',
+    stat_corridors: 'शामिल शहर',
     stat_excellence: 'वर्षों का उत्कृष्ट अनुभव',
 
     // Categories

@@ -110,6 +110,9 @@ export default function PropertiesPage() {
                       <div>
                         <div style={{ fontWeight:600, fontSize:'0.875rem', maxWidth:180 }}>{p.title}</div>
                         <div style={{ color:'#94A3B8', fontSize:'0.72rem' }}>{p.location?.split(',')[0]}</div>
+                        <div style={{ color:'#6366F1', fontSize:'0.68rem', fontFamily:'monospace', fontWeight:700, marginTop:1 }}>
+                          ID: #{p.id?.length > 10 ? p.id.slice(0, 8).toUpperCase() : p.id?.toUpperCase()}
+                        </div>
                       </div>
                     </div>
                   </td>

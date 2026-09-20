@@ -53,6 +53,15 @@ router.get('/featured', async (_req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ── GET /api/properties/hero-stats (alias for /api/settings/hero-stats)
+router.get('/hero-stats', async (_req, res) => {
+  try {
+    const { fetchHeroStats } = require('./settings');
+    const stats = await fetchHeroStats();
+    res.json({ success: true, data: stats });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // ── GET /api/properties/:id — increment views ──────────────
 router.get('/:id', async (req, res) => {
   try {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/constants/app_strings.dart';
 import '../data/models/property_model.dart';
 import '../data/repositories/property_repository.dart';
 
@@ -13,6 +14,14 @@ class PropertyProvider extends ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = '';
 
+  // Dynamic Hero Stats
+  Map<String, String> _heroStats = {
+    'properties_transacted': AppStrings.statTransacted,
+    'happy_buyers': AppStrings.statBuyers,
+    'cities_covered': AppStrings.statCities,
+    'years_experience': AppStrings.statExperience,
+  };
+
   // Filter States
   String _searchQuery = '';
   String _selectedCategory = 'All'; // All, Residential, Commercial, Agriculture
@@ -24,6 +33,7 @@ class PropertyProvider extends ChangeNotifier {
 
   List<PropertyModel> get allProperties => _allProperties;
   List<PropertyModel> get featuredProperties => _featuredProperties;
+  Map<String, String> get heroStats => _heroStats;
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
 
@@ -89,16 +99,57 @@ class PropertyProvider extends ChangeNotifier {
     try {
       final propsFuture = _repository.getProperties();
       final featFuture = _repository.getFeaturedProperties();
+      final statsFuture = _repository.getHeroStats();
 
-      final results = await Future.wait([propsFuture, featFuture]);
-      _allProperties = results[0];
-      _featuredProperties = results[1];
+      final results = await Future.wait([propsFuture, featFuture, statsFuture]);
+      _allProperties = results[0] as List<PropertyModel>;
+      _featuredProperties = results[1] as List<PropertyModel>;
+      final fetchedStats = results[2] as Map<String, String>?;
+      if (fetchedStats != null) {
+        _heroStats = {
+          'properties_transacted': (fetchedStats['properties_transacted']?.isNotEmpty ?? false)
+              ? fetchedStats['properties_transacted']!
+              : _heroStats['properties_transacted']!,
+          'happy_buyers': (fetchedStats['happy_buyers']?.isNotEmpty ?? false)
+              ? fetchedStats['happy_buyers']!
+              : _heroStats['happy_buyers']!,
+          'cities_covered': (fetchedStats['cities_covered']?.isNotEmpty ?? false)
+              ? fetchedStats['cities_covered']!
+              : _heroStats['cities_covered']!,
+          'years_experience': (fetchedStats['years_experience']?.isNotEmpty ?? false)
+              ? fetchedStats['years_experience']!
+              : _heroStats['years_experience']!,
+        };
+      }
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> refreshStats() async {
+    try {
+      final fetched = await _repository.getHeroStats();
+      if (fetched != null) {
+        _heroStats = {
+          'properties_transacted': (fetched['properties_transacted']?.isNotEmpty ?? false)
+              ? fetched['properties_transacted']!
+              : _heroStats['properties_transacted']!,
+          'happy_buyers': (fetched['happy_buyers']?.isNotEmpty ?? false)
+              ? fetched['happy_buyers']!
+              : _heroStats['happy_buyers']!,
+          'cities_covered': (fetched['cities_covered']?.isNotEmpty ?? false)
+              ? fetched['cities_covered']!
+              : _heroStats['cities_covered']!,
+          'years_experience': (fetched['years_experience']?.isNotEmpty ?? false)
+              ? fetched['years_experience']!
+              : _heroStats['years_experience']!,
+        };
+        notifyListeners();
+      }
+    } catch (_) {}
   }
 
   void setSearchQuery(String query) {

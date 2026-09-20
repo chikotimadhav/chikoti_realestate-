@@ -100,4 +100,29 @@ class PropertyRepository {
     }
     return true;
   }
+
+  // Fetch dynamic Hero & App Stats
+  Future<Map<String, String>?> getHeroStats() async {
+    for (final url in [ApiConstants.heroStats, ApiConstants.heroStatsFallback]) {
+      try {
+        final uri = Uri.parse(url);
+        final response = await _client.get(uri).timeout(ApiConstants.timeoutDuration);
+        if (response.statusCode == 200) {
+          final json = jsonDecode(response.body);
+          if (json['data'] is Map) {
+            final data = json['data'] as Map<String, dynamic>;
+            return {
+              'properties_transacted': data['properties_transacted']?.toString() ?? '',
+              'happy_buyers': data['happy_buyers']?.toString() ?? '',
+              'cities_covered': data['cities_covered']?.toString() ?? '',
+              'years_experience': data['years_experience']?.toString() ?? '',
+            };
+          }
+        }
+      } catch (_) {
+        // Try fallback url if first fails
+      }
+    }
+    return null;
+  }
 }

@@ -153,4 +153,22 @@ router.get('/inquiries', async (_req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ── GET /api/admin/hero-stats ──────────────────────────────
+router.get('/hero-stats', async (_req, res) => {
+  try {
+    const { fetchHeroStats } = require('./settings');
+    const stats = await fetchHeroStats();
+    res.json({ success: true, data: stats });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ── PUT /api/admin/hero-stats ──────────────────────────────
+router.put('/hero-stats', async (req, res) => {
+  try {
+    const { saveHeroStats } = require('./settings');
+    const updated = await saveHeroStats(req.body || {});
+    res.json({ success: true, data: updated, message: 'Hero stats updated successfully' });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 module.exports = router;

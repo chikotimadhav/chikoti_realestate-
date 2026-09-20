@@ -14,6 +14,8 @@ class ApiConstants {
   static const String me = '$baseUrl/api/auth/me';
   static const String profile = '$baseUrl/api/users/profile';
   static const String updates = '$baseUrl/api/updates';
+  static const String heroStats = '$baseUrl/api/settings/hero-stats';
+  static const String heroStatsFallback = '$baseUrl/api/properties/hero-stats';
   
   static const Duration timeoutDuration = Duration(seconds: 15);
 }

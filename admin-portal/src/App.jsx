@@ -6,6 +6,7 @@ import OverviewPage    from './pages/Overview.jsx';
 import PropertiesPage  from './pages/Properties.jsx';
 import UsersPage       from './pages/Users.jsx';
 import InquiriesPage   from './pages/Inquiries.jsx';
+import HeroStatsPage   from './pages/HeroStats.jsx';
 
 export default function App() {
   const [user, setUser] = useState(() => {
@@ -27,10 +28,11 @@ export default function App() {
   if (!user || user.role !== 'admin') return <AdminLogin onLogin={onLogin} />;
 
   const pages = {
-    overview:   <OverviewPage   />,
-    properties: <PropertiesPage />,
-    users:      <UsersPage      />,
-    inquiries:  <InquiriesPage  />,
+    overview:     <OverviewPage navigate={setPage} />,
+    properties:   <PropertiesPage />,
+    users:        <UsersPage />,
+    inquiries:    <InquiriesPage />,
+    'hero-stats': <HeroStatsPage />,
   };
 
   return (

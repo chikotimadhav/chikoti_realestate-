@@ -49,7 +49,7 @@ class _InquiryBottomSheetState extends State<InquiryBottomSheet> {
       if (user.phone != null) _phoneController.text = user.phone!;
     }
     _messageController.text =
-        'Hi, I am interested in ${widget.property.title} in ${widget.property.location}. Please share full documentation and pricing details.';
+        'Hi, I am interested in ${widget.property.title} (Property ID: #${widget.property.displayId}) in ${widget.property.location}. Please share full documentation and pricing details.';
   }
 
   @override
@@ -189,11 +189,35 @@ class _InquiryBottomSheetState extends State<InquiryBottomSheet> {
           const SizedBox(height: 16),
           Text('Property Inquiry', style: AppTypography.heading2()),
           const SizedBox(height: 4),
-          Text(
-            widget.property.title,
-            style: AppTypography.bodySmall(color: AppColors.goldMuted),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  widget.property.title,
+                  style: AppTypography.bodySmall(color: AppColors.goldMuted),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.navy.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: AppColors.navy.withOpacity(0.15)),
+                ),
+                child: Text(
+                  'ID: #${widget.property.displayId}',
+                  style: const TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.navy,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ),
+            ],
           ),
           const Divider(height: 24),
           CustomTextField(

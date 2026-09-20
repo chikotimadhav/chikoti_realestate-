@@ -11,6 +11,12 @@ const PORTALS = [
 export default function HomePage({ navigate, openDetail, t = {} }) {
   const [featured, setFeatured] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [heroStats, setHeroStats] = useState({
+    properties_transacted: '525+',
+    happy_buyers: '1,280+',
+    cities_covered: '28',
+    years_experience: '15 yrs',
+  });
 
   useEffect(() => {
     fetch(`${API_URL}/api/properties/featured`)
@@ -18,13 +24,26 @@ export default function HomePage({ navigate, openDetail, t = {} }) {
       .then(d => setFeatured(d.data || []))
       .catch(() => setFeatured([]))
       .finally(() => setLoading(false));
+
+    fetch(`${API_URL}/api/settings/hero-stats`)
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.data) setHeroStats(d.data);
+      })
+      .catch(() => {
+        // Backup alias route
+        fetch(`${API_URL}/api/properties/hero-stats`)
+          .then(r => r.json())
+          .then(d => { if (d && d.data) setHeroStats(d.data); })
+          .catch(() => {});
+      });
   }, []);
 
   const STATS = [
-    { icon: '🏠', value: '525+', label: t.stat_properties || 'Properties Transacted' },
-    { icon: '👥', value: '1,280+', label: t.stat_buyers || 'Happy Buyers' },
-    { icon: '🏙️', value: '33', label: t.stat_corridors || 'Districts & Corridors' },
-    { icon: '⭐', value: '15 yrs', label: t.stat_excellence || 'Of Excellence' },
+    { icon: '🏠', value: heroStats.properties_transacted || '525+', label: t.stat_properties || 'Properties Transacted' },
+    { icon: '👥', value: heroStats.happy_buyers || '1,280+', label: t.stat_buyers || 'Happy Buyers' },
+    { icon: '🏙️', value: heroStats.cities_covered || '28', label: t.stat_cities || t.stat_corridors || 'Cities Covered' },
+    { icon: '⭐', value: heroStats.years_experience || '15 yrs', label: t.stat_excellence || 'Of Excellence' },
   ];
 
   const TYPES = [

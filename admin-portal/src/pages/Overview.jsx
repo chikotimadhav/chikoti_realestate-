@@ -13,18 +13,21 @@ const STAT_CONFIG = [
   { key:'views',      label:'Property Views',   icon:'👁️', color:'#059669', bg:'#F0FDF4' },
 ];
 
-export default function OverviewPage() {
-  const [stats,   setStats]   = useState({});
-  const [loading, setLoading] = useState(true);
-  const [pending, setPending] = useState([]);
+export default function OverviewPage({ navigate }) {
+  const [stats,     setStats]     = useState({});
+  const [heroStats, setHeroStats] = useState({});
+  const [loading,   setLoading]   = useState(true);
+  const [pending,   setPending]   = useState([]);
 
   useEffect(() => {
     Promise.all([
       fetch(`${API_URL}/api/admin/stats`, { headers:{ Authorization:`Bearer ${token()}` } }).then(r=>r.json()),
       fetch(`${API_URL}/api/admin/properties?status=pending`, { headers:{ Authorization:`Bearer ${token()}` } }).then(r=>r.json()),
-    ]).then(([s, p]) => {
+      fetch(`${API_URL}/api/settings/hero-stats`).then(r=>r.json()).catch(()=>({})),
+    ]).then(([s, p, h]) => {
       setStats(s.data || {});
       setPending((p.data || []).slice(0, 5));
+      if (h && h.data) setHeroStats(h.data);
     }).catch(console.error)
     .finally(() => setLoading(false));
   }, []);
@@ -48,6 +51,71 @@ export default function OverviewPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Live Hero & App Stats Banner */}
+      <div className="card" style={{
+        marginBottom:'2rem',
+        padding:'1.25rem 1.5rem',
+        background:'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
+        color:'white',
+        border:'1px solid #334155',
+      }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'1rem', marginBottom:'1.25rem' }}>
+          <div>
+            <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
+              <span style={{ fontSize:'1.25rem' }}>⭐</span>
+              <span style={{ fontWeight:800, fontSize:'1.05rem', color:'#F0C040' }}>Buyer Portal & Mobile App Hero Stats</span>
+            </div>
+            <div style={{ color:'#94A3B8', fontSize:'0.78rem', marginTop:'0.2rem' }}>
+              Live statistics displayed to buyers across the web portal and mobile app
+            </div>
+          </div>
+          <button
+            onClick={() => navigate && navigate('hero-stats')}
+            className="btn"
+            style={{
+              background:'#F0C040',
+              color:'#0F294D',
+              fontWeight:800,
+              fontSize:'0.82rem',
+              padding:'0.5rem 1.1rem',
+              border:'none',
+              borderRadius:8,
+              display:'flex',
+              alignItems:'center',
+              gap:'0.4rem',
+              cursor:'pointer',
+            }}
+          >
+            ✏️ Edit Hero Stats
+          </button>
+        </div>
+
+        <div style={{
+          display:'grid',
+          gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',
+          gap:'0.75rem',
+        }}>
+          {[
+            { icon:'🏠', val: heroStats.properties_transacted || '525+', label:'Properties Transacted' },
+            { icon:'👥', val: heroStats.happy_buyers || '1,280+',        label:'Happy Buyers' },
+            { icon:'🏙️', val: heroStats.cities_covered || '28',         label:'Cities Covered' },
+            { icon:'⭐', val: heroStats.years_experience || '15 yrs',    label:'Of Excellence' },
+          ].map(item => (
+            <div key={item.label} style={{
+              background:'rgba(255,255,255,0.06)',
+              padding:'0.85rem',
+              borderRadius:10,
+              border:'1px solid rgba(255,255,255,0.08)',
+              textAlign:'center',
+            }}>
+              <div style={{ fontSize:'1.2rem', marginBottom:'0.2rem' }}>{item.icon}</div>
+              <div style={{ fontSize:'1.35rem', fontWeight:900, color:'#F0C040', lineHeight:1.2 }}>{item.val}</div>
+              <div style={{ color:'#94A3B8', fontSize:'0.72rem', marginTop:'0.2rem' }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Pending Properties */}
@@ -88,11 +156,13 @@ export default function OverviewPage() {
       {/* Quick Links */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:'1rem' }}>
         {[
-          { icon:'🏠', title:'Manage Properties', sub:'View & moderate all listings', color:'#4F46E5' },
-          { icon:'👥', title:'Manage Users',      sub:'Verify & control accounts',    color:'#7C3AED' },
-          { icon:'📩', title:'All Inquiries',     sub:'Monitor buyer activity',       color:'#DC2626' },
+          { icon:'🏠', title:'Manage Properties', sub:'View & moderate all listings', color:'#4F46E5', page:'properties' },
+          { icon:'👥', title:'Manage Users',      sub:'Verify & control accounts',    color:'#7C3AED', page:'users' },
+          { icon:'📩', title:'All Inquiries',     sub:'Monitor buyer activity',       color:'#DC2626', page:'inquiries' },
+          { icon:'⭐', title:'Hero & App Stats',  sub:'Live counts for Web & Mobile', color:'#D97706', page:'hero-stats' },
         ].map(c => (
           <div key={c.title} className="card" style={{ padding:'1.5rem', cursor:'pointer' }}
+            onClick={() => c.page && navigate && navigate(c.page)}
             onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
             onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
             <div style={{ fontSize:'2rem', marginBottom:'0.75rem' }}>{c.icon}</div>

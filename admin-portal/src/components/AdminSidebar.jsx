@@ -7,6 +7,7 @@ const NAV = [
   { page:'properties', label:'Properties',  icon:'🏠' },
   { page:'users',      label:'Users',       icon:'👥' },
   { page:'inquiries',  label:'Inquiries',   icon:'📩' },
+  { page:'hero-stats', label:'Hero & App Stats', icon:'⭐' },
 ];
 
 export default function AdminSidebar({ page, navigate }) {

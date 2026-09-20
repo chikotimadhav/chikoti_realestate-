@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../widgets/smart_image.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
@@ -190,7 +191,61 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 12),
+
+                      // Assigned Property ID Row
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: AppColors.navy.withOpacity(0.06),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppColors.navy.withOpacity(0.12)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.tag, size: 13, color: AppColors.navy),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'PROPERTY ID: #${p.displayId}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.navy,
+                                    fontFamily: 'monospace',
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                InkWell(
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(text: p.id));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Property ID copied: ${p.displayId}'),
+                                        duration: const Duration(seconds: 2),
+                                        backgroundColor: AppColors.navy,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.gold.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Icon(Icons.copy, size: 12, color: AppColors.navy),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
 
                       // Title
                       Text(p.title, style: AppTypography.heading1()),

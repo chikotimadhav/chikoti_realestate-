@@ -85,6 +85,18 @@ class PropertyModel {
     this.resAmenities = const [],
   });
 
+  String get displayId {
+    if (id.trim().isEmpty) return 'PROP-N/A';
+    final clean = id.trim();
+    if (clean.toLowerCase().startsWith('prop-') || clean.toLowerCase().startsWith('eh-')) {
+      return clean.toUpperCase();
+    }
+    if (clean.length > 8) {
+      return 'PROP-${clean.substring(0, 8).toUpperCase()}';
+    }
+    return 'PROP-${clean.toUpperCase()}';
+  }
+
   String get primaryImage {
     if (images.isNotEmpty && images.first.isNotEmpty) {
       return images.first;

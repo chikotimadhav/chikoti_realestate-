@@ -82,20 +82,42 @@ class PropertyCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Top Left: Category Badge
+                // Top Left: Category Badge & Property ID
                 Positioned(
                   top: 10,
                   left: 10,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: typeColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      property.landType.toUpperCase(),
-                      style: AppTypography.tag(color: AppColors.white),
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: typeColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          property.landType.toUpperCase(),
+                          style: AppTypography.tag(color: AppColors.white),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.goldBright.withOpacity(0.5), width: 0.8),
+                        ),
+                        child: Text(
+                          '#${property.displayId}',
+                          style: const TextStyle(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.goldBright,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 // Top Right: Favorite Button
@@ -177,6 +199,25 @@ class PropertyCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Assigned Property ID
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.navy.withOpacity(0.06),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: AppColors.navy.withOpacity(0.12)),
+                    ),
+                    child: Text(
+                      'PROPERTY ID: #${property.displayId}',
+                      style: const TextStyle(
+                        fontSize: 8.5,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.navy,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
                   // Title
                   Text(
                     property.title,
@@ -248,8 +289,8 @@ class PropertyCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: AppColors.gold.withOpacity(0.3)),
                         ),
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Text(
                               'Details',
                               style: TextStyle(

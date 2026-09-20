@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:estatehub/data/models/user_model.dart';
+import 'package:estatehub/data/models/property_model.dart';
 import 'package:estatehub/data/repositories/property_repository.dart';
 import 'package:estatehub/providers/language_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -79,6 +80,44 @@ void main() {
       final repo = PropertyRepository();
       final prop = await repo.getPropertyById('non-existent');
       expect(prop, isNull);
+    });
+
+    test('getHeroStats returns null or fallback gracefully when offline', () async {
+      final repo = PropertyRepository();
+      final stats = await repo.getHeroStats();
+      // Offline gracefully returns null without throwing unhandled exception
+      expect(stats, anyOf(isNull, isA<Map<String, String>>()));
+    });
+  });
+
+  group('PropertyModel Tests', () {
+    test('displayId formats ID correctly for cards and details', () {
+      final prop1 = PropertyModel(
+        id: 'prop-1',
+        title: 'Villa 1',
+        landType: 'Residential',
+        price: 10000000,
+        location: 'Hyderabad',
+      );
+      expect(prop1.displayId, 'PROP-1');
+
+      final prop2 = PropertyModel(
+        id: 'eh-prop-102',
+        title: 'Villa 2',
+        landType: 'Residential',
+        price: 20000000,
+        location: 'Hyderabad',
+      );
+      expect(prop2.displayId, 'EH-PROP-102');
+
+      final prop3 = PropertyModel(
+        id: 'c0355152-3298-4e86-9a2d-45db6220cb6b',
+        title: 'Villa 3',
+        landType: 'Commercial',
+        price: 50000000,
+        location: 'Hyderabad',
+      );
+      expect(prop3.displayId, 'PROP-C0355152');
     });
   });
 }

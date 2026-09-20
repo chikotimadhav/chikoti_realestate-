@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_strings.dart';
 import '../core/constants/app_typography.dart';
+import '../providers/property_provider.dart';
 
 class StatsCounterBar extends StatelessWidget {
   const StatsCounterBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final propProvider = Provider.of<PropertyProvider>(context);
+    final stats = propProvider.heroStats;
+
+    final transacted = stats['properties_transacted']?.isNotEmpty == true
+        ? stats['properties_transacted']!
+        : AppStrings.statTransacted;
+    final buyers = stats['happy_buyers']?.isNotEmpty == true
+        ? stats['happy_buyers']!
+        : AppStrings.statBuyers;
+    final cities = stats['cities_covered']?.isNotEmpty == true
+        ? stats['cities_covered']!
+        : AppStrings.statCities;
+    final experience = stats['years_experience']?.isNotEmpty == true
+        ? stats['years_experience']!
+        : AppStrings.statExperience;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -26,13 +44,13 @@ class StatsCounterBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         child: Row(
           children: [
-            _buildStatItem('🏠', AppStrings.statTransacted, AppStrings.statTransactedLabel),
+            _buildStatItem('🏠', transacted, AppStrings.statTransactedLabel),
             _buildDivider(),
-            _buildStatItem('👥', AppStrings.statBuyers, AppStrings.statBuyersLabel),
+            _buildStatItem('👥', buyers, AppStrings.statBuyersLabel),
             _buildDivider(),
-            _buildStatItem('🏙️', AppStrings.statCities, AppStrings.statCitiesLabel),
+            _buildStatItem('🏙️', cities, AppStrings.statCitiesLabel),
             _buildDivider(),
-            _buildStatItem('⭐', AppStrings.statExperience, AppStrings.statExperienceLabel),
+            _buildStatItem('⭐', experience, AppStrings.statExperienceLabel),
           ],
         ),
       ),

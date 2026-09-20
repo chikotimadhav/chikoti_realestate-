@@ -140,6 +140,25 @@ CREATE TABLE IF NOT EXISTS updates (
 
 CREATE INDEX IF NOT EXISTS idx_updates_created_at ON updates(created_at DESC);
 
+-- 6. SYSTEM SETTINGS TABLE (Platform Configurations & Hero Stats)
+CREATE TABLE IF NOT EXISTS system_settings (
+  key TEXT PRIMARY KEY,
+  value JSONB NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Seed initial hero stats
+INSERT INTO system_settings (key, value)
+VALUES (
+  'hero_stats',
+  '{
+    "properties_transacted": "525+",
+    "happy_buyers": "1,280+",
+    "cities_covered": "28",
+    "years_experience": "15 yrs"
+  }'::JSONB
+) ON CONFLICT (key) DO NOTHING;
+
 -- Seed default admin account (password is bcrypt hashed 'admin123')
 INSERT INTO users (id, name, email, password, role, is_verified, is_active)
 VALUES (
